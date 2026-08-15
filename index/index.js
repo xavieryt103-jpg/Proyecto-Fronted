@@ -171,7 +171,7 @@ var PRODUCTOS_SEED = [
     desc: 'Pollo deshilachado en salsa de la casa, con arroz blanco y ensalada fresca.' },
   { id: 'ALM-06', nombre: 'Tallarines rojos',       cat: 'almuerzos', precio: 12.50, stock: 30, activo: true, img: IMG + 'tallarines-rojos.jpg',
     desc: 'Pasta en salsa de tomate casera con carne molida y queso parmesano rallado.' },
-  { id: 'ALM-07', nombre: 'Arroz chaufa de pollo',  cat: 'almuerzos', precio: 13.00, stock: 30, activo: true, img: IMG + 'arroz-chaufa.jpg',
+  { id: 'ALM-07', nombre: 'Arroz chaufa de pollo',  cat: 'almuerzos', precio: 13.00, stock: 30, activo: true, img: IMG + 'arrozchaufa.jpg',
     desc: 'Arroz salteado al wok con pollo, huevo, cebolla china y sillao. Estilo chifa.' },
   { id: 'ALM-08', nombre: 'Causa limeña',           cat: 'almuerzos', precio: 11.00, stock: 22, activo: true, img: IMG + 'causa-limena.jpg',
     desc: 'Papa amarilla prensada con ají y limón, rellena de pollo o atún. Se sirve fría.' },
