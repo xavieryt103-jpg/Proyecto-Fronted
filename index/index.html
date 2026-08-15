@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coffee Online · Cafetería universitaria UTP</title>
+<meta name="description" content="Pide tu desayuno, almuerzo o café desde el aula y recógelo en barra sin hacer cola. Cafetería del campus UTP.">
+<link rel="icon" type="image/png" href="../Imagenes/logo-coffee-online.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="index.css">
+</head>
+<body>
+<script src="index.js"></script>
+
+<div id="cabecera"></div>
+
+<main>
+
+  <!-- ==================== PORTADA ==================== -->
+  <section class="portada" id="inicio">
+
+    <div class="portada__pista">
+
+        <div class="portada__riel">
+
+            <div class="portada__diapositiva is-active">
+                <div class="portada__foto"
+                     style="background-image:url('../Imagenes/slider-menu-hd.jpg')">
+                </div>
+            </div>
+
+            <div class="portada__diapositiva">
+                <div class="portada__foto"
+                     style="background-image:url('../Imagenes/slider-sanguche-hd.jpg')">
+                </div>
+            </div>
+
+            <div class="portada__diapositiva">
+                <div class="portada__foto"
+                     style="background-image:url('../Imagenes/slider-wrap-pollo-hd.jpg')">
+                </div>
+            </div>
+
+            <div class="portada__diapositiva">
+                <div class="portada__foto"
+                     style="background-image:url('../Imagenes/slider-causa-hd.jpg')">
+                </div>
+            </div>
+
+            <div class="portada__diapositiva">
+                <div class="portada__foto"
+                     style="background-image:url('../Imagenes/slider-mixto-hd.jpg')">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="portada__velo"></div>
+        <div class="portada__textura"></div>
+
+    </div>
+
+
+    <!-- Flecha anterior -->
+    <button
+        class="portada__flecha portada__flecha--anterior"
+        id="portada-anterior"
+        aria-label="Diapositiva anterior">
+
+        <svg class="icono">
+            <use href="#i-arrow-left"></use>
+        </svg>
+
+    </button>
+
+
+    <!-- Flecha siguiente -->
+    <button
+        class="portada__flecha portada__flecha--siguiente"
+        id="portada-siguiente"
+        aria-label="Siguiente diapositiva">
+
+        <svg class="icono">
+            <use href="#i-arrow-right"></use>
+        </svg>
+
+    </button>
+
+
+    <div class="contenedor portada__interior">
+
+        <div class="portada__texto">
+
+            <div class="portada__frase is-active">
+                <h1>
+                    Tu almuerzo listo antes de que suene el
+                    <em>timbre</em>.
+                </h1>
+
+                <p>
+                    Pides desde el aula, eliges la hora y pasas directo
+                    por la barra.
+                </p>
+            </div>
+
+
+            <div class="portada__frase">
+                <h1>
+                    El café que te salva la clase de las
+                    <em>siete</em>.
+                </h1>
+
+                <p>
+                    Pasado al momento, capuchino con espuma de verdad.
+                </p>
+            </div>
+
+
+            <div class="portada__frase">
+                <h1>
+                    Desayuna en serio sin perder el
+                    <em>receso</em>.
+                </h1>
+
+                <p>
+                    Todo servido desde las siete de la mañana.
+                </p>
+            </div>
+
+
+            <div class="portada__frase">
+                <h1>
+                    Menú del día a doce soles y
+                    <em>cero</em> fila.
+                </h1>
+
+                <p>
+                    Entrada, segundo y refresco.
+                </p>
+            </div>
+
+
+            <div class="portada__frase">
+                <h1>
+                    Bien helado, para bajar el
+                    <em>almuerzo</em>.
+                </h1>
+
+                <p>
+                    Jugos exprimidos al momento.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="portada__controles">
+
+            <div class="portada__puntos">
+
+                <button class="portada__punto"
+                        aria-label="Ir a la diapositiva 1">
+                    <i></i>
+                </button>
+
+                <button class="portada__punto"
+                        aria-label="Ir a la diapositiva 2">
+                    <i></i>
+                </button>
+
+                <button class="portada__punto"
+                        aria-label="Ir a la diapositiva 3">
+                    <i></i>
+                </button>
+
+                <button class="portada__punto"
+                        aria-label="Ir a la diapositiva 4">
+                    <i></i>
+                </button>
+
+                <button class="portada__punto"
+                        aria-label="Ir a la diapositiva 5">
+                    <i></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+  <!-- ==================== CINTA ==================== -->
+  <div class="cinta" aria-hidden="true">
+    <div class="cinta__pista" id="cinta"></div>
+  </div>
+
+  <!-- ==================== ELIGE POR ANTOJO ==================== -->
+  <section class="seccion seccion--compacta">
+    <div class="contenedor">
+      <div class="seccion-cabecera" data-revelar>
+        <div>
+          <h2>Arrastra y mira qué se te antoja</h2>
+        </div>
+        <div class="carrusel__nav">
+          <button class="boton-icono boton-icono--contorno" id="antojo-anterior" aria-label="Anterior">
+            <svg class="icono"><use href="#i-arrow-left"></use></svg>
+          </button>
+          <button class="boton-icono boton-icono--contorno" id="antojo-siguiente" aria-label="Siguiente">
+            <svg class="icono"><use href="#i-arrow-right"></use></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="carrusel" id="carrusel-antojo">
+        <a class="tarjeta-ancha" href="?cat=almuerzos#carta" data-revelar="zoom">
+          <img src="../Imagenes/arroz-con-pollo.jpg" alt="Almuerzos de la cafetería">
+          <span class="tarjeta-ancha__velo"></span>
+          <span class="tarjeta-ancha__cuerpo">
+            <h3>Almuerzos</h3>
+            <p>Lomo saltado, ají de gallina, chaufa y el menú del día.</p>
+            <span class="tarjeta-ancha__ir">Ver 13 platos <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg></span>
+          </span>
+        </a>
+
+        <a class="tarjeta-ancha" href="?cat=desayunos#carta" data-revelar="zoom" style="--delay:80ms">
+          <img src="../Imagenes/slider-sanguche-hd.jpg" alt="Desayunos de la cafetería">
+          <span class="tarjeta-ancha__velo"></span>
+          <span class="tarjeta-ancha__cuerpo">
+            <h3>Desayunos</h3>
+            <p>Desde las 07:00, para llegar despierto a la primera clase.</p>
+            <span class="tarjeta-ancha__ir">Ver 7 opciones <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg></span>
+          </span>
+        </a>
+
+        <a class="tarjeta-ancha" href="?cat=cafe#carta" data-revelar="zoom" style="--delay:160ms">
+          <img src="../Imagenes/slider-causa-hd.jpg" alt="Café de barra">
+          <span class="tarjeta-ancha__velo"></span>
+          <span class="tarjeta-ancha__cuerpo">
+            <h3>Café de barra</h3>
+            <p>Pasado, espresso, capuchino, mocaccino y frappé.</p>
+            <span class="tarjeta-ancha__ir">Ver 9 preparaciones <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg></span>
+          </span>
+        </a>
+
+        <a class="tarjeta-ancha" href="?cat=bebidas#carta" data-revelar="zoom" style="--delay:240ms">
+          <img src="../Imagenes/jugo-de-naranja.jpg" alt="Bebidas frías">
+          <span class="tarjeta-ancha__velo"></span>
+          <span class="tarjeta-ancha__cuerpo">
+            <h3>Bebidas frías</h3>
+            <p>Jugos al momento, chicha de la casa y gaseosas heladas.</p>
+            <span class="tarjeta-ancha__ir">Ver 8 bebidas <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg></span>
+          </span>
+        </a>
+
+        <a class="tarjeta-ancha" href="?cat=almuerzos#carta" data-revelar="zoom" style="--delay:320ms">
+          <img src="../Imagenes/trio-marino.jpg" alt="Platos marinos">
+          <span class="tarjeta-ancha__velo"></span>
+          <span class="tarjeta-ancha__cuerpo">
+            <h3>Del norte y del mar</h3>
+            <p>Cabrito norteño los viernes y trío marino mientras alcance.</p>
+            <span class="tarjeta-ancha__ir">Ver especiales <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg></span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FAVORITOS ==================== -->
+  <section class="seccion seccion--compacta" style="position:relative;overflow:hidden">
+    <div class="contenedor">
+      <div class="seccion-cabecera" data-revelar>
+        <div>
+          <h2>Favoritos del campus</h2>
+        </div>
+        <div class="carrusel__nav">
+          <button class="boton-icono boton-icono--contorno" id="fav-anterior" aria-label="Anterior">
+            <svg class="icono"><use href="#i-arrow-left"></use></svg>
+          </button>
+          <button class="boton-icono boton-icono--contorno" id="fav-siguiente" aria-label="Siguiente">
+            <svg class="icono"><use href="#i-arrow-right"></use></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="carrusel" id="carrusel-favoritos"></div>
+    </div>
+  </section>
+
+  <!-- ==================== CÓMO FUNCIONA ==================== -->
+  <section class="seccion seccion--compacta">
+    <div class="contenedor">
+      <div class="grid-2" style="gap:64px;align-items:start">
+
+        <div data-revelar="left">
+          <h2>Cuatro pasos y ya está pedido</h2>
+          <p class="intro mt-4">
+            No hay app que descargar ni carnet que mostrar. Entras con tu correo,
+            armas el pedido y la cocina lo recibe al instante.
+          </p>
+          <a class="boton boton--primario mt-6" href="../login/login.html">
+            Crear mi cuenta
+            <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg>
+          </a>
+        </div>
+
+        <div class="pasos" data-revelar="right">
+          <div class="paso">
+            <div>
+              <h4>Arma tu pedido</h4>
+              <p class="pequeno atenuado">La carta muestra el stock real del día. Si algo se agota, desaparece.</p>
+            </div>
+          </div>
+          <div class="paso">
+            <div>
+              <h4>Elige la hora</h4>
+              <p class="pequeno atenuado">Bloques de quince minutos entre las 07:00 y las 21:00.</p>
+            </div>
+          </div>
+          <div class="paso">
+            <div>
+              <h4>Recoge donde te quede</h4>
+              <p class="pequeno atenuado">Barra del Pabellón A, biblioteca, laboratorios o auditorio.</p>
+            </div>
+          </div>
+          <div class="paso">
+            <div>
+              <h4>Paga al recoger</h4>
+              <p class="pequeno atenuado">Yape, Plin, tarjeta o efectivo. Nunca pedimos datos de tarjeta en la web.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== LA CARTA ==================== -->
+  <section class="seccion" id="carta" style="background:var(--surface-2)">
+    <div class="contenedor">
+
+      <div class="seccion-cabecera" data-revelar>
+        <div>
+          <h2 id="titulo-carta">Toda la carta</h2>
+          <p class="atenuado mt-2" id="bajada-carta">
+            Precios en soles e incluyen IGV. El stock se actualiza durante el día.
+          </p>
+        </div>
+        <div class="fila gap-2 pequeno atenuado">
+          <svg class="icono icono--sm"><use href="#i-clock"></use></svg>
+          Cocina abierta hasta las 21:00
+        </div>
+      </div>
+
+      <div class="estructura-menu">
+
+        <aside class="filtros">
+          <div class="filtros__grupo">
+            <p class="filtros__titulo">Categorías</p>
+            <div class="filtros__lista" id="lista-categorias"></div>
+          </div>
+
+          <div class="filtros__grupo" id="grupo-etiquetas">
+            <p class="filtros__titulo">Etiquetas</p>
+            <div class="chips">
+              <button class="chip" data-etiqueta="destacado">Favoritos</button>
+              <button class="chip" data-etiqueta="nuevo">Novedades</button>
+              <button class="chip" data-etiqueta="barato">Hasta S/ 8</button>
+            </div>
+          </div>
+
+          <div class="filtros__grupo">
+            <div class="panel" style="padding:16px">
+              <p class="filtros__titulo" style="margin-bottom:8px">Menú del día</p>
+              <p class="pequeno atenuado">Entrada, segundo y refresco por S/ 12.00. Se publica a las 11:00.</p>
+              <a class="boton boton--fantasma boton--sm boton--bloque mt-3" href="../producto/producto.html?id=ALM-01">Ver el menú</a>
+            </div>
+          </div>
+        </aside>
+
+        <div>
+          <div class="barra-herramientas">
+            <div class="buscador">
+              <span class="buscador__icono"><svg class="icono icono--sm"><use href="#i-search"></use></svg></span>
+              <input class="input" type="search" id="buscador" placeholder="Busca un plato, una bebida, un postre…" autocomplete="off">
+            </div>
+            <select class="select" id="orden" style="width:auto;min-width:190px">
+              <option value="recomendado">Orden recomendado</option>
+              <option value="precio-asc">Precio: de menor a mayor</option>
+              <option value="precio-desc">Precio: de mayor a menor</option>
+              <option value="nombre">Nombre A – Z</option>
+            </select>
+          </div>
+
+          <div class="grid-productos" id="resultados"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MENÚ DEL DÍA ==================== -->
+  <section class="seccion seccion--compacta">
+    <div class="contenedor">
+      <div class="franja" data-revelar="zoom" style="position:relative;overflow:hidden">
+        <div class="grid-2" style="align-items:center;gap:48px">
+          <div>
+            <h2>Menú del día a <span class="contador" data-contar-hasta="12" data-decimales="0">0</span> soles</h2>
+            <p class="mt-4" style="color:rgba(239,228,214,.78);max-width:44ch">
+              Entrada, segundo y refresco. La carta del día se publica a las once de la mañana
+              y se sirve hasta agotar stock — normalmente vuela antes de las dos.
+            </p>
+            <div class="portada__acciones">
+              <a class="boton boton--primario" href="?cat=almuerzos#carta" style="background:var(--amber);color:#1B0F08">
+                Ver los almuerzos
+                <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg>
+              </a>
+            </div>
+          </div>
+          <div class="marco-imagen">
+            <img src="../Imagenes/menu-del-dia.png" alt="Menú del día servido en la cafetería"
+                 style="width:100%;height:100%;object-fit:contain;display:block;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== NOSOTROS ==================== -->
+  <section class="seccion" id="nosotros" style="position:relative;overflow:hidden">
+    <div class="contenedor">
+
+      <div class="historia mb-6">
+        <div data-revelar="left">
+          <h2>Así nació Coffee Online</h2>
+          <p class="intro mt-4">
+            Coffee Online es la marca de la cafetería universitaria de la UTP.
+            No inventamos un restaurante nuevo: digitalizamos el que ya existe para
+            resolver el único problema que todo el mundo en el campus conoce.
+          </p>
+          <p class="mt-4 atenuado">
+            En hora punta la fila sale del local. Alumnos que quieren almorzar antes de entrar a clase
+            terminan yéndose sin comer porque no les alcanza el tiempo; los profesores hacen lo mismo
+            entre una clase y otra. La comida estaba, las ganas estaban — lo que faltaba era la cola.
+          </p>
+          <p class="mt-4 atenuado">
+            Con esta plataforma el pedido entra a cocina antes de que la persona llegue.
+            Cuando baja del aula, su nombre ya está en la barra.
+          </p>
+
+          <div class="fila gap-2 mt-6 fila--ajustar">
+            <a class="boton boton--primario" href="#carta">
+              Empezar a pedir
+              <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg>
+            </a>
+            <a class="boton boton--fantasma" href="../pedidos/pedidos.html">Ver mis pedidos</a>
+          </div>
+        </div>
+
+        <div class="historia__arte" data-revelar="right">
+          <img src="../Imagenes/causa-limena.jpg" alt="Plato preparado en la cafetería del campus"
+               style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;">
+        </div>
+      </div>
+
+      <div class="mt-6" data-revelar>
+        <p class="filtros__titulo mb-4">Lo que veíamos todos los días</p>
+        <div class="problema">
+          <div class="problema__celda">
+            <b>La cola</b>
+            <span>En hora punta la fila cruza el pasillo. Media hora de espera para un menú de doce soles.</span>
+          </div>
+          <div class="problema__celda">
+            <b>El receso</b>
+            <span>Cuarenta y cinco minutos entre clase y clase. Si la cola se come treinta, no queda tiempo para almorzar.</span>
+          </div>
+          <div class="problema__celda">
+            <b>La renuncia</b>
+            <span>Alumnos y profesores que llegan, ven la fila, se dan media vuelta y se quedan sin comer.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3 mt-6">
+        <div class="caracteristica" data-revelar>
+          <span class="caracteristica__icono"><svg class="icono icono--lg"><use href="#i-clock"></use></svg></span>
+          <div>
+            <h4>Sin fila</h4>
+            <p class="pequeno atenuado">El pedido entra a cocina desde el aula. Recoges y sigues con tu día.</p>
+          </div>
+        </div>
+        <div class="caracteristica" data-revelar style="--delay:90ms">
+          <span class="caracteristica__icono"><svg class="icono icono--lg"><use href="#i-leaf"></use></svg></span>
+          <div>
+            <h4>La misma cocina</h4>
+            <p class="pequeno atenuado">Mismos cocineros, mismos insumos, mismo precio de campus.</p>
+          </div>
+        </div>
+        <div class="caracteristica" data-revelar style="--delay:180ms">
+          <span class="caracteristica__icono"><svg class="icono icono--lg"><use href="#i-coins"></use></svg></span>
+          <div>
+            <h4>Sin recargo</h4>
+            <p class="pequeno atenuado">Pedir online no cuesta más. Solo la entrega fuera de barra suma S/ 1.50.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<div id="pie"></div>
+
+<script>
+  CO.iniciar({ activo: 'inicio' });
+
+  /* ---------- Cinta superior ---------- */
+  (function () {
+    var frases = [
+      'Menú del día S/ 12.00', 'Lomo saltado', 'Capuchino con canela', 'Pan con chicharrón',
+      'Chicha morada de la casa', 'Cabrito norteño los viernes', 'Jugo recién exprimido',
+      'Café pasado de Villa Rica', 'Sin cola', 'Recojo en barra o en biblioteca'
+    ];
+    var bloque = frases.map(function (f) { return '<span class="cinta__elemento">' + f + '</span>'; }).join('');
+    CO.qs('#cinta').innerHTML = bloque + bloque;   // duplicado para que el bucle sea continuo
+  })();
+
+  /* ---------- Favoritos en carrusel ---------- */
+  var favoritos = CO.productos().filter(function (p) { return p.destacado && p.activo; });
+  CO.qs('#carrusel-favoritos').innerHTML = favoritos.map(CO.tarjetaProducto).join('');
+
+  /* ---------- La carta ---------- */
+  var estado = {
+    cat: CO.param('cat') || 'todos',
+    q: '',
+    etiqueta: null,
+    orden: 'recomendado'
+  };
+  var todos = CO.productos();
+
+  function pintarCategorias() {
+    CO.qs('#lista-categorias').innerHTML = CATEGORIAS.map(function (c) {
+      var n = c.id === 'todos' ? todos.length : todos.filter(function (p) { return p.cat === c.id; }).length;
+      return '<button class="filtros__elemento' + (c.id === estado.cat ? ' is-active' : '') + '" data-cat="' + c.id + '">' +
+               CO.icono(c.icono, 'icono--sm') +
+               '<span>' + c.nombre + '</span>' +
+               '<span class="filtros__conteo">' + n + '</span>' +
+             '</button>';
+    }).join('');
+  }
+
+  function filtrar() {
+    var q = CO.normalizar(estado.q.trim());
+    var lista = todos.filter(function (p) {
+      if (estado.cat !== 'todos' && p.cat !== estado.cat) return false;
+      if (estado.etiqueta === 'destacado' && !p.destacado) return false;
+      if (estado.etiqueta === 'nuevo' && !p.nuevo) return false;
+      if (estado.etiqueta === 'barato' && p.precio > 8) return false;
+      if (q && CO.normalizar(p.nombre + ' ' + p.desc).indexOf(q) === -1) return false;
+      return true;
+    });
+
+    if (estado.orden === 'precio-asc')  lista.sort(function (a, b) { return a.precio - b.precio; });
+    if (estado.orden === 'precio-desc') lista.sort(function (a, b) { return b.precio - a.precio; });
+    if (estado.orden === 'nombre')      lista.sort(function (a, b) { return a.nombre.localeCompare(b.nombre, 'es'); });
+    if (estado.orden === 'recomendado') lista.sort(function (a, b) { return (b.destacado ? 1 : 0) - (a.destacado ? 1 : 0); });
+
+    return lista;
+  }
+
+  function pintarCarta() {
+    var cat = CO.categoria(estado.cat);
+    CO.qs('#titulo-carta').textContent = cat.nombre;
+    CO.qs('#bajada-carta').textContent = estado.cat === 'todos'
+      ? 'Precios en soles e incluyen IGV. El stock se actualiza durante el día.'
+      : 'Todo lo que tenemos hoy en ' + cat.nombre.toLowerCase() + '.';
+
+    var lista = filtrar();
+    var cont = CO.qs('#resultados');
+
+    if (!lista.length) {
+      cont.className = '';
+      cont.innerHTML =
+        '<div class="vacio">' +
+          '<div class="vacio__icono">' + CO.icono('i-search', 'icono--lg') + '</div>' +
+          '<h3>No encontramos nada con eso</h3>' +
+          '<p class="atenuado mt-2">Prueba con otra palabra o quita los filtros que tengas puestos.</p>' +
+          '<button class="boton boton--fantasma boton--sm mt-4" id="limpiar">Limpiar filtros</button>' +
+        '</div>';
+      CO.qs('#limpiar').addEventListener('click', function () {
+        estado.q = ''; estado.etiqueta = null; estado.cat = 'todos';
+        CO.qs('#buscador').value = '';
+        CO.qsa('#grupo-etiquetas .chip').forEach(function (c) { c.classList.remove('is-active'); });
+        pintarCategorias(); pintarCarta();
+      });
+    } else {
+      cont.className = 'grid-productos';
+      cont.innerHTML = lista.map(CO.tarjetaProducto).join('');
+      MOV.escalonar('#resultados', 45, 'pop');
+      MOV.revelar(cont);
+    }
+  }
+
+  CO.qs('#lista-categorias').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-cat]');
+    if (!btn) return;
+    estado.cat = btn.getAttribute('data-cat');
+    pintarCategorias(); pintarCarta();
+  });
+
+  CO.qs('#grupo-etiquetas').addEventListener('click', function (e) {
+    var chip = e.target.closest('[data-etiqueta]');
+    if (!chip) return;
+    var valor = chip.getAttribute('data-etiqueta');
+    estado.etiqueta = estado.etiqueta === valor ? null : valor;
+    CO.qsa('#grupo-etiquetas .chip').forEach(function (c) { c.classList.toggle('is-active', c === chip && estado.etiqueta); });
+    pintarCarta();
+  });
+
+  CO.qs('#buscador').addEventListener('input', function () { estado.q = this.value; pintarCarta(); });
+  CO.qs('#orden').addEventListener('change', function () { estado.orden = this.value; pintarCarta(); });
+
+  /* Los enlaces ?cat=… de la propia página filtran sin recargar */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('a[href^="?cat="]');
+    if (!a) return;
+    e.preventDefault();
+    estado.cat = a.getAttribute('href').split('?cat=')[1].split('#')[0];
+    pintarCategorias(); pintarCarta();
+    var carta = document.getElementById('carta');
+    var margen = document.querySelector('.cabecera-sitio').offsetHeight;
+    window.scrollTo({ top: carta.getBoundingClientRect().top + window.scrollY - margen - 12, behavior: 'smooth' });
+  });
+
+  pintarCategorias();
+  pintarCarta();
+
+  /* ---------- Movimiento ---------- */
+  MOV.portada('#inicio');
+  MOV.carrusel('#carrusel-antojo',    '#antojo-anterior', '#antojo-siguiente');
+  MOV.carrusel('#carrusel-favoritos', '#fav-anterior',    '#fav-siguiente');
+  MOV.autoDesplazar('#carrusel-antojo');
+  MOV.autoDesplazar('#carrusel-favoritos');
+  MOV.escalonar('#carrusel-favoritos', 60, 'pop');
+  MOV.paralaje();
+  MOV.contadores();
+  MOV.detalles();
+  MOV.anclas();
+  MOV.revelar();
+  MOV.menuActivo({
+    inicio:   '../index/index.html#inicio',
+    carta:    '../index/index.html#carta',
+    nosotros: '../index/index.html#nosotros'
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confirmar pedido · Coffee Online</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23241610'/%3E%3Cg transform='translate(4,3) scale(0.82)' fill='none' stroke='%23D9A45B' stroke-linecap='round'%3E%3Cpath fill='%23D9A45B' fill-rule='evenodd' d='M6.5 14.5h29v9.2A14.5 14.5 0 0 1 21 38.2 14.5 14.5 0 0 1 6.5 23.7Z M17.4 19.4v13.1l3.3-3.3 2.3 5.1 2.9-1.3-2.3-5 4.7-.3Z'/%3E%3Cpath stroke-width='3' d='M36 18.6h2.3a5.4 5.4 0 0 1 0 10.8H36'/%3E%3Cpath stroke-width='3.4' d='M5.6 42.4h30.8'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+<script src="checkout.js"></script>
+
+<div id="cabecera"></div>
+
+<main class="contenedor" style="padding-block:var(--s6) var(--s8)">
+
+  <nav class="migas">
+    <a href="../carrito/carrito.html">Mi pedido</a>
+    <svg class="icono icono--sm"><use href="#i-chev-right"></use></svg>
+    <span>Confirmar</span>
+  </nav>
+
+  <h1 style="font-size:2.25rem" class="mb-6">Confirma tu pedido</h1>
+
+  <form id="form-checkout" novalidate>
+    <div class="dividido">
+
+      <div class="pila" style="--s3:24px">
+
+        <!-- Datos de contacto -->
+        <section class="panel">
+          <h3 class="panel__titulo mb-4">
+            <svg class="icono icono--sm" style="vertical-align:-3px"><use href="#i-user"></use></svg>
+            Tus datos
+          </h3>
+          <div class="grid-2" style="gap:16px">
+            <div class="campo">
+              <label class="campo__etiqueta" for="nombre">Nombre y apellido</label>
+              <input class="input" id="nombre" type="text" autocomplete="name">
+              <p class="campo__error">Necesitamos tu nombre para llamarte en barra.</p>
+            </div>
+            <div class="campo">
+              <label class="campo__etiqueta" for="correo">Correo</label>
+              <input class="input" id="correo" type="email" autocomplete="email">
+              <p class="campo__error">Escribe un correo válido.</p>
+            </div>
+          </div>
+          <div class="campo">
+            <label class="campo__etiqueta" for="telefono">Celular <span class="atenuado">(para avisarte cuando esté listo)</span></label>
+            <input class="input" id="telefono" type="tel" placeholder="9XX XXX XXX" maxlength="9" inputmode="numeric">
+            <p class="campo__error">El celular debe tener 9 dígitos y empezar con 9.</p>
+          </div>
+        </section>
+
+        <!-- Entrega -->
+        <section class="panel">
+          <h3 class="panel__titulo mb-4">
+            <svg class="icono icono--sm" style="vertical-align:-3px"><use href="#i-pin"></use></svg>
+            ¿Dónde lo recoges?
+          </h3>
+          <div class="pila" id="puntos-entrega"></div>
+
+          <div class="campo mt-5" style="margin-bottom:0">
+            <label class="campo__etiqueta" for="hora">Hora de recojo</label>
+            <select class="select" id="hora"></select>
+            <p class="campo__ayuda">La cocina necesita entre 8 y 12 minutos según el plato.</p>
+          </div>
+        </section>
+
+        <!-- Pago -->
+        <section class="panel">
+          <h3 class="panel__titulo mb-4">
+            <svg class="icono icono--sm" style="vertical-align:-3px"><use href="#i-wallet"></use></svg>
+            Forma de pago
+          </h3>
+          <div class="pila" id="metodos-pago"></div>
+          <p class="campo__ayuda mt-3">Todos los pagos se realizan al momento de recoger. No pedimos datos de tarjeta en la web.</p>
+        </section>
+
+        <!-- Nota -->
+        <section class="panel">
+          <h3 class="panel__titulo mb-4">
+            <svg class="icono icono--sm" style="vertical-align:-3px"><use href="#i-pencil"></use></svg>
+            Indicaciones para la cocina
+          </h3>
+          <textarea class="textarea" id="nota" placeholder="Ejemplo: sin cebolla, el ají aparte, la gaseosa sin hielo…"></textarea>
+        </section>
+
+      </div>
+
+      <!-- Resumen -->
+      <aside class="panel panel-fijo">
+        <h3 class="panel__titulo mb-4">Resumen del pedido</h3>
+        <div id="lineas-resumen"></div>
+        <dl class="resumen"><dt>Subtotal</dt><dd id="r-subtotal">—</dd></dl>
+        <dl class="resumen"><dt id="r-envio-label">Recojo en barra</dt><dd id="r-envio">—</dd></dl>
+        <dl class="resumen resumen--total"><dt>Total</dt><dd id="r-total">—</dd></dl>
+
+        <div class="alerta alerta--error mt-4" id="error-general" hidden>
+          <svg class="icono icono--sm"><use href="#i-alert"></use></svg>
+          <span id="error-general-texto"></span>
+        </div>
+
+        <button class="boton boton--primario boton--bloque boton--lg mt-5" type="submit">
+          Enviar pedido a cocina
+          <svg class="icono icono--sm"><use href="#i-check"></use></svg>
+        </button>
+        <a class="boton boton--discreto boton--bloque mt-2" href="../carrito/carrito.html">Volver a mi pedido</a>
+      </aside>
+
+    </div>
+  </form>
+</main>
+
+<div id="pie"></div>
+
+<script>
+  CO.iniciar({ activo: 'carta' });
+
+  if (CO.exigirSesion()) {
+    var sesion = CO.sesion();
+    var lineas = CO.carritoDetallado();
+
+    if (!lineas.length) {
+      location.replace('../carrito/carrito.html');
+    } else {
+      CO.qs('#nombre').value = sesion.nombre;
+      CO.qs('#correo').value = sesion.correo;
+
+      /* --- Puntos de entrega --- */
+      CO.qs('#puntos-entrega').innerHTML = PUNTOS_ENTREGA.map(function (e, i) {
+        return '<label class="opcion">' +
+          '<input type="radio" name="entrega" value="' + e.id + '"' + (i === 0 ? ' checked' : '') + '>' +
+          '<span style="flex:1">' +
+            '<span class="opcion__titulo">' + e.nombre + '</span>' +
+            '<span class="opcion__descripcion">' + e.detalle + '</span>' +
+          '</span>' +
+          '<span class="' + (e.costo ? 'price' : 'tag tag--sage') + '" style="font-size:.875rem">' +
+            (e.costo ? '+ ' + CO.money(e.costo) : 'Gratis') + '</span>' +
+        '</label>';
+      }).join('');
+
+      /* --- Métodos de pago --- */
+      CO.qs('#metodos-pago').innerHTML = METODOS_PAGO.map(function (m, i) {
+        return '<label class="opcion">' +
+          '<input type="radio" name="pago" value="' + m.id + '"' + (i === 0 ? ' checked' : '') + '>' +
+          '<span style="flex:1">' +
+            '<span class="opcion__titulo">' + m.nombre + '</span>' +
+            '<span class="opcion__descripcion">' + m.detalle + '</span>' +
+          '</span>' +
+          CO.icono(m.icono) +
+        '</label>';
+      }).join('');
+
+      /* --- Horas de recojo disponibles (cada 15 min, hasta las 21:00) --- */
+      (function () {
+        var ahora = new Date();
+        var inicio = new Date(ahora.getTime() + 15 * 60000);
+        var minutos = Math.ceil(inicio.getMinutes() / 15) * 15;
+        inicio.setMinutes(minutos, 0, 0);
+        if (inicio.getHours() < 7) inicio.setHours(7, 0, 0, 0);
+
+        var opciones = [];
+        var t = new Date(inicio);
+        while (t.getHours() < 21 && opciones.length < 40) {
+          opciones.push(String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0'));
+          t = new Date(t.getTime() + 15 * 60000);
+        }
+        if (!opciones.length) opciones = ['07:00', '07:15', '07:30', '07:45', '08:00'];
+
+        CO.qs('#hora').innerHTML = opciones.map(function (h, i) {
+          return '<option value="' + h + '">' + h + (i === 0 ? ' — lo antes posible' : '') + '</option>';
+        }).join('');
+      })();
+
+      /* --- Resumen --- */
+      CO.qs('#lineas-resumen').innerHTML = lineas.map(function (l) {
+        return '<div class="fila fila--entre pequeno" style="padding:6px 0;gap:12px">' +
+          '<span><b style="color:var(--ink)">' + l.cantidad + '×</b> ' + CO.escapar(l.nombre) + '</span>' +
+          '<span class="numero">' + CO.money(l.importe) + '</span>' +
+        '</div>';
+      }).join('') + '<hr style="border:none;border-top:1px solid var(--line);margin:12px 0">';
+
+      function recalcular() {
+        var id = CO.qs('input[name="entrega"]:checked').value;
+        var punto = PUNTOS_ENTREGA.filter(function (e) { return e.id === id; })[0];
+        var sub = CO.subtotal();
+        CO.qs('#r-subtotal').textContent = CO.money(sub);
+        CO.qs('#r-envio-label').textContent = punto.nombre;
+        CO.qs('#r-envio').textContent = punto.costo ? CO.money(punto.costo) : 'Gratis';
+        CO.qs('#r-total').textContent = CO.money(sub + punto.costo);
+      }
+      CO.qsa('input[name="entrega"]').forEach(function (r) { r.addEventListener('change', recalcular); });
+      recalcular();
+
+      /* --- Validación y envío --- */
+      function marcar(input, valido) {
+        input.closest('.campo').classList.toggle('is-invalid', !valido);
+        return valido;
+      }
+
+      CO.qs('#form-checkout').addEventListener('submit', function (e) {
+        e.preventDefault();
+        CO.qs('#error-general').hidden = true;
+
+        var nombre   = CO.qs('#nombre');
+        var correo   = CO.qs('#correo');
+        var telefono = CO.qs('#telefono');
+
+        var ok = true;
+        ok = marcar(nombre, nombre.value.trim().length >= 3) && ok;
+        ok = marcar(correo, /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo.value.trim())) && ok;
+        ok = marcar(telefono, /^9\d{8}$/.test(telefono.value.trim())) && ok;
+
+        if (!ok) {
+          CO.qs('#error-general-texto').textContent = 'Revisa los campos marcados en rojo antes de continuar.';
+          CO.qs('#error-general').hidden = false;
+          return;
+        }
+
+        // [API] POST /api/pedidos
+        var pedido = CO.crearPedido({
+          cliente: nombre.value.trim(),
+          correo: correo.value.trim(),
+          telefono: telefono.value.trim(),
+          entrega: CO.qs('input[name="entrega"]:checked').value,
+          pago: CO.qs('input[name="pago"]:checked').value,
+          horaRecojo: CO.qs('#hora').value,
+          nota: CO.qs('#nota').value.trim()
+        });
+
+        location.href = '../confirmacion/confirmacion.html?codigo=' + encodeURIComponent(pedido.codigo);
+      });
+    }
+  }
+
+  MOV.revelar();
+  MOV.detalles();
+  MOV.anclas();
+</script>
+</body>
+</html>

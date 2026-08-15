@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Producto · Coffee Online</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23241610'/%3E%3Cg transform='translate(4,3) scale(0.82)' fill='none' stroke='%23D9A45B' stroke-linecap='round'%3E%3Cpath fill='%23D9A45B' fill-rule='evenodd' d='M6.5 14.5h29v9.2A14.5 14.5 0 0 1 21 38.2 14.5 14.5 0 0 1 6.5 23.7Z M17.4 19.4v13.1l3.3-3.3 2.3 5.1 2.9-1.3-2.3-5 4.7-.3Z'/%3E%3Cpath stroke-width='3' d='M36 18.6h2.3a5.4 5.4 0 0 1 0 10.8H36'/%3E%3Cpath stroke-width='3.4' d='M5.6 42.4h30.8'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="producto.css">
+</head>
+<body>
+<script src="producto.js"></script>
+
+<div id="cabecera"></div>
+
+<main class="contenedor" style="padding-block:var(--s5) var(--s8)">
+  <nav class="migas" id="miga"></nav>
+  <div id="detalle"></div>
+
+  <section class="seccion--compacta" id="seccion-sugerencias" hidden style="padding-top:var(--s8)">
+    <div class="seccion-cabecera">
+      <div>
+        <p class="antetitulo">Para acompañar</p>
+        <h2 style="font-size:1.625rem">También te puede gustar</h2>
+      </div>
+    </div>
+    <div class="grid-productos" id="sugerencias"></div>
+  </section>
+</main>
+
+<div id="pie"></div>
+
+<script>
+  CO.iniciar({ activo: 'carta' });
+
+  var p = CO.producto(CO.param('id'));
+
+  if (!p) {
+    CO.qs('#detalle').innerHTML =
+      '<div class="vacio">' +
+        '<div class="vacio__icono">' + CO.icono('i-alert', 'icono--lg') + '</div>' +
+        '<h3>No encontramos ese producto</h3>' +
+        '<p class="atenuado mt-2">Puede que ya no esté en la carta.</p>' +
+        '<a class="boton boton--primario boton--sm mt-4" href="../index/index.html#carta">Volver a la carta</a>' +
+      '</div>';
+  } else {
+    document.title = p.nombre + ' · Coffee Online';
+    var cat = CO.categoria(p.cat);
+
+    CO.qs('#miga').innerHTML =
+      '<a href="../index/index.html">Inicio</a>' + CO.icono('i-chev-right', 'icono--sm') +
+      '<a href="../index/index.html#carta">La carta</a>' + CO.icono('i-chev-right', 'icono--sm') +
+      '<a href="../index/index.html?cat=' + p.cat + '#carta">' + cat.nombre + '</a>' + CO.icono('i-chev-right', 'icono--sm') +
+      '<span>' + CO.escapar(p.nombre) + '</span>';
+
+    var etiquetas = '';
+    if (p.destacado) etiquetas += '<span class="etiqueta etiqueta--ambar">' + CO.icono('i-star', 'icono--sm') + 'Favorito del campus</span>';
+    if (p.nuevo)     etiquetas += '<span class="etiqueta etiqueta--salvia">Nuevo en carta</span>';
+    etiquetas += '<span class="etiqueta">' + CO.icono(cat.icono, 'icono--sm') + cat.nombre + '</span>';
+
+    var disponibilidad = !p.activo
+      ? '<span class="etiqueta etiqueta--arcilla">Agotado por hoy</span>'
+      : p.stock <= 12
+        ? '<span class="etiqueta etiqueta--ambar">Quedan ' + p.stock + ' porciones</span>'
+        : '<span class="etiqueta etiqueta--salvia">' + CO.icono('i-check', 'icono--sm') + 'Disponible ahora</span>';
+
+    CO.qs('#detalle').innerHTML =
+      '<div class="grid-2" style="gap:56px;align-items:start">' +
+
+        '<div style="border-radius:var(--r-xl);overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3;background:var(--surface-2)">' +
+          CO.miniatura(p).replace('<img', '<img style="width:100%;height:100%;object-fit:cover"') +
+        '</div>' +
+
+        '<div>' +
+          '<div class="fila fila--ajustar gap-2 mb-4">' + etiquetas + '</div>' +
+          '<h1 style="font-size:2.5rem">' + CO.escapar(p.nombre) + '</h1>' +
+          '<p class="intro mt-4">' + CO.escapar(p.desc) + '</p>' +
+
+          '<div class="fila gap-4 mt-5" style="align-items:baseline">' +
+            '<span class="price" style="font-size:2rem">' + CO.money(p.precio) + '</span>' +
+            disponibilidad +
+          '</div>' +
+
+          '<div class="panel mt-6">' +
+            '<div class="fila fila--entre fila--ajustar gap-4">' +
+              '<div>' +
+                '<p class="campo__etiqueta" style="margin-bottom:8px">Cantidad</p>' +
+                '<div class="cantidad">' +
+                  '<button class="boton-icono boton-icono--sm" id="menos" aria-label="Quitar uno">' + CO.icono('i-minus', 'icono--sm') + '</button>' +
+                  '<span class="cantidad__valor" id="cantidad">1</span>' +
+                  '<button class="boton-icono boton-icono--sm" id="mas" aria-label="Agregar uno">' + CO.icono('i-plus', 'icono--sm') + '</button>' +
+                '</div>' +
+              '</div>' +
+              '<div class="derecha">' +
+                '<p class="diminuto atenuado">Importe</p>' +
+                '<p class="price" style="font-size:1.5rem" id="importe">' + CO.money(p.precio) + '</p>' +
+              '</div>' +
+            '</div>' +
+
+            '<div class="fila gap-2 mt-5">' +
+              (p.activo
+                ? '<button class="boton boton--primario boton--lg" id="btn-agregar" style="flex:1">' +
+                    CO.icono('i-cart', 'icono--sm') + 'Agregar al pedido</button>' +
+                  '<a class="boton boton--fantasma boton--lg" href="../carrito/carrito.html">Ver mi pedido</a>'
+                : '<button class="boton boton--primario boton--lg boton--bloque" disabled>Agotado por hoy</button>') +
+            '</div>' +
+          '</div>' +
+
+          '<ul class="pila mt-6 pequeno atenuado">' +
+            '<li class="fila gap-2">' + CO.icono('i-clock', 'icono--sm') + 'Preparación aproximada: 8 a 12 minutos.</li>' +
+            '<li class="fila gap-2">' + CO.icono('i-pin', 'icono--sm')   + 'Recojo en barra (Pabellón A) o entrega dentro del campus.</li>' +
+            '<li class="fila gap-2">' + CO.icono('i-wallet', 'icono--sm')+ 'Pagas al recoger: Yape, Plin, tarjeta o efectivo.</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>';
+
+    /* Selector de cantidad */
+    var cantidad = 1;
+    function refrescar() {
+      CO.qs('#cantidad').textContent = cantidad;
+      CO.qs('#importe').textContent = CO.money(p.precio * cantidad);
+    }
+    var btnMenos = CO.qs('#menos'), btnMas = CO.qs('#mas'), btnAgregar = CO.qs('#btn-agregar');
+    if (btnMenos) btnMenos.addEventListener('click', function () { if (cantidad > 1) { cantidad--; refrescar(); } });
+    if (btnMas)   btnMas.addEventListener('click',   function () { if (cantidad < 20) { cantidad++; refrescar(); } });
+    if (btnAgregar) btnAgregar.addEventListener('click', function () {
+      CO.agregar(p.id, cantidad);
+      CO.toast(cantidad + ' × ' + p.nombre + ' en tu pedido');
+    });
+
+    /* Sugerencias de la misma categoría */
+    var sugeridos = CO.productos().filter(function (x) {
+      return x.cat === p.cat && x.id !== p.id && x.activo;
+    }).slice(0, 4);
+
+    if (sugeridos.length) {
+      CO.qs('#seccion-sugerencias').hidden = false;
+      CO.qs('#sugerencias').innerHTML = sugeridos.map(CO.tarjetaProducto).join('');
+      MOV.escalonar('#sugerencias', 70, 'pop');
+    }
+  }
+
+  MOV.revelar();
+  MOV.detalles();
+  MOV.anclas();
+</script>
+</body>
+</html>

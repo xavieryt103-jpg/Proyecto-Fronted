@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mi pedido · Coffee Online</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23241610'/%3E%3Cg transform='translate(4,3) scale(0.82)' fill='none' stroke='%23D9A45B' stroke-linecap='round'%3E%3Cpath fill='%23D9A45B' fill-rule='evenodd' d='M6.5 14.5h29v9.2A14.5 14.5 0 0 1 21 38.2 14.5 14.5 0 0 1 6.5 23.7Z M17.4 19.4v13.1l3.3-3.3 2.3 5.1 2.9-1.3-2.3-5 4.7-.3Z'/%3E%3Cpath stroke-width='3' d='M36 18.6h2.3a5.4 5.4 0 0 1 0 10.8H36'/%3E%3Cpath stroke-width='3.4' d='M5.6 42.4h30.8'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="carrito.css">
+</head>
+<body>
+<script src="carrito.js"></script>
+
+<div id="cabecera"></div>
+
+<main class="contenedor" style="padding-block:var(--s6) var(--s8)">
+
+  <nav class="migas">
+    <a href="../index/index.html">Inicio</a>
+    <svg class="icono icono--sm"><use href="#i-chev-right"></use></svg>
+    <span>Mi pedido</span>
+  </nav>
+
+  <div class="seccion-cabecera" style="margin-bottom:var(--s5)">
+    <div>
+      <h1 style="font-size:2.25rem">Mi pedido</h1>
+      <p class="atenuado mt-2" id="resumen-cabecera"></p>
+    </div>
+    <a class="boton boton--discreto" href="../index/index.html#carta">
+      <svg class="icono icono--sm"><use href="#i-plus"></use></svg>
+      Seguir agregando
+    </a>
+  </div>
+
+  <div id="contenido"></div>
+</main>
+
+<div id="pie"></div>
+
+<script>
+  CO.iniciar({ activo: 'carta' });
+
+  function pintar() {
+    var lineas = CO.carritoDetallado();
+    var cont = CO.qs('#contenido');
+
+    if (!lineas.length) {
+      CO.qs('#resumen-cabecera').textContent = 'Todavía no has agregado nada.';
+      cont.innerHTML =
+        '<div class="vacio">' +
+          '<div class="vacio__icono">' + CO.icono('i-cart', 'icono--lg') + '</div>' +
+          '<h3>Tu pedido está vacío</h3>' +
+          '<p class="atenuado mt-2">Date una vuelta por la carta: el menú del día está a S/ 12.00.</p>' +
+          '<a class="boton boton--primario mt-4" href="../index/index.html#carta">Ver la carta' +
+            CO.icono('i-arrow-right', 'icono--sm') + '</a>' +
+        '</div>';
+      return;
+    }
+
+    var sub = CO.subtotal();
+    var unidades = CO.unidades();
+    CO.qs('#resumen-cabecera').textContent =
+      unidades + (unidades === 1 ? ' unidad' : ' unidades') + ' · ' + lineas.length +
+      (lineas.length === 1 ? ' producto' : ' productos distintos');
+
+    cont.innerHTML =
+      '<div class="dividido">' +
+
+        '<div class="panel panel--ajustado">' +
+          '<div class="panel__cabecera">' +
+            '<span class="panel__titulo">Productos</span>' +
+            '<button class="boton boton--peligro boton--sm" id="vaciar">' + CO.icono('i-trash', 'icono--sm') + 'Vaciar</button>' +
+          '</div>' +
+          '<div class="panel__cuerpo" style="padding-block:0">' +
+            lineas.map(function (l) {
+              return '<div class="articulo">' +
+                '<a class="articulo__medio" href="../producto/producto.html?id=' + l.id + '">' +
+                  CO.miniatura(l) +
+                '</a>' +
+                '<div>' +
+                  '<a class="articulo__nombre" href="../producto/producto.html?id=' + l.id + '">' + CO.escapar(l.nombre) + '</a>' +
+                  '<p class="pequeno atenuado">' + CO.money(l.precio) + ' c/u · ' + CO.categoria(l.cat).nombre + '</p>' +
+                  '<div class="fila gap-2 mt-3">' +
+                    '<div class="cantidad">' +
+                      '<button class="boton-icono boton-icono--sm" data-menos="' + l.id + '" aria-label="Quitar uno">' + CO.icono('i-minus', 'icono--sm') + '</button>' +
+                      '<span class="cantidad__valor">' + l.cantidad + '</span>' +
+                      '<button class="boton-icono boton-icono--sm" data-mas="' + l.id + '" aria-label="Agregar uno">' + CO.icono('i-plus', 'icono--sm') + '</button>' +
+                    '</div>' +
+                    '<button class="boton boton--peligro boton--sm" data-quitar="' + l.id + '">' + CO.icono('i-trash', 'icono--sm') + 'Quitar</button>' +
+                  '</div>' +
+                '</div>' +
+                '<span class="price">' + CO.money(l.importe) + '</span>' +
+              '</div>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+
+        '<aside class="panel panel-fijo">' +
+          '<h3 class="panel__titulo mb-4">Resumen</h3>' +
+          '<dl class="resumen"><dt>Subtotal</dt><dd>' + CO.money(sub) + '</dd></dl>' +
+          '<dl class="resumen"><dt>Entrega</dt><dd>Se elige en el siguiente paso</dd></dl>' +
+          '<dl class="resumen resumen--total"><dt>Total parcial</dt><dd>' + CO.money(sub) + '</dd></dl>' +
+          '<a class="boton boton--primario boton--bloque boton--lg mt-5" href="../checkout/checkout.html">' +
+            'Continuar' + CO.icono('i-arrow-right', 'icono--sm') + '</a>' +
+          '<a class="boton boton--discreto boton--bloque mt-2" href="../index/index.html#carta">Seguir agregando</a>' +
+          '<div class="caja-ayuda mt-5">' +
+            'El pago se hace al recoger en barra. Si el pedido pasa de S/ 50, la cocina lo confirma por WhatsApp antes de prepararlo.' +
+          '</div>' +
+        '</aside>' +
+
+      '</div>';
+
+    CO.qs('#vaciar').addEventListener('click', function () {
+      CO.vaciarCarrito();
+      CO.toast('Pedido vaciado', 'i-trash');
+      pintar();
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    var mas    = e.target.closest('[data-mas]');
+    var menos  = e.target.closest('[data-menos]');
+    var quitar = e.target.closest('[data-quitar]');
+    if (!mas && !menos && !quitar) return;
+
+    var id = mas    ? mas.getAttribute('data-mas')
+           : menos  ? menos.getAttribute('data-menos')
+           :          quitar.getAttribute('data-quitar');
+
+    var actual = (CO.carrito().filter(function (l) { return l.id === id; })[0] || {}).cantidad || 0;
+
+    if (mas)    CO.fijarCantidad(id, actual + 1);
+    if (menos)  CO.fijarCantidad(id, actual - 1);
+    if (quitar) { CO.quitar(id); CO.toast('Producto quitado del pedido', 'i-trash'); }
+
+    pintar();
+  });
+
+  pintar();
+
+  MOV.revelar();
+  MOV.detalles();
+  MOV.anclas();
+</script>
+</body>
+</html>

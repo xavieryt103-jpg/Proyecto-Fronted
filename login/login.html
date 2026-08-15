@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ingresar · Coffee Online</title>
+<meta name="description" content="Inicia sesión o crea tu cuenta para pedir en la cafetería del campus.">
+<link rel="icon" type="image/png" href="../Imagenes/logo-coffee-online.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<script src="login.js"></script>
+
+<div class="acceso">
+
+  <!-- ============ Panel lateral ============ -->
+  <aside class="acceso__lateral">
+    <div class="acceso__lateral-fondo" style="background-image:url('Imagenes/capuchino.jpg')"></div>
+    <div class="acceso__lateral-velo"></div>
+
+    <a class="marca" href="../index/index.html">
+      <span class="marca__simbolo" style="background:rgba(255,255,255,.1)">
+        <svg class="icono"><use href="#i-logo"></use></svg>
+      </span>
+      <span>
+        <span class="marca__nombre" style="color:#FFF8EE">Coffee Online</span>
+        <span class="marca__etiqueta" style="color:rgba(242,233,221,.6)">Cafetería universitaria UTP</span>
+      </span>
+    </a>
+
+    <div>
+      <p class="acceso__cita">Pide desde el aula. Recoge cuando llegues.</p>
+      <p class="mt-4" style="color:rgba(242,233,221,.66);max-width:38ch">
+        Con tu cuenta guardas tus pedidos frecuentes, sigues el estado de cada orden
+        y pagas con Yape, tarjeta o efectivo.
+      </p>
+    </div>
+
+    <div class="fila gap-4" style="color:rgba(242,233,221,.6);font-size:.8125rem">
+      <span class="fila gap-2"><svg class="icono icono--sm"><use href="#i-clock"></use></svg>07:00 – 21:00</span>
+      <span class="fila gap-2"><svg class="icono icono--sm"><use href="#i-pin"></use></svg>Pabellón A</span>
+    </div>
+  </aside>
+
+  <!-- ============ Formularios ============ -->
+  <main class="acceso__principal">
+    <div class="acceso__tarjeta">
+
+      <a class="boton boton--discreto boton--sm mb-5" href="../index/index.html" style="margin-left:-12px">
+        <svg class="icono icono--sm"><use href="#i-arrow-left"></use></svg>
+        Volver al inicio
+      </a>
+
+      <div class="login__logo mb-4">
+        <img src="../Imagenes/logo-coffee-online.png" alt="Coffee Online">
+      </div>
+
+      <h1 style="font-size:1.875rem">Hola de nuevo</h1>
+      <p class="atenuado mt-2 mb-6">Ingresa para continuar con tu pedido.</p>
+
+      <div class="pestanas" role="tablist">
+        <button class="pestanas__boton is-active" id="tab-login" role="tab">Iniciar sesión</button>
+        <button class="pestanas__boton" id="tab-registro" role="tab">Crear cuenta</button>
+      </div>
+
+      <!-- Inicio de sesión -->
+      <form id="form-login" novalidate>
+        <div class="alerta alerta--error" id="error-login" hidden>
+          <svg class="icono icono--sm"><use href="#i-alert"></use></svg>
+          <span id="error-login-texto"></span>
+        </div>
+
+        <div class="campo campo--icono">
+          <label class="campo__etiqueta" for="correo">Correo institucional</label>
+          <input class="input" id="correo" type="email" placeholder="nombre@coffeeonline.pe" autocomplete="email">
+          <span class="campo__icono"><svg class="icono icono--sm"><use href="#i-mail"></use></svg></span>
+        </div>
+
+        <div class="campo campo--icono">
+          <label class="campo__etiqueta" for="clave">Contraseña</label>
+          <input class="input" id="clave" type="password" placeholder="••••••••" autocomplete="current-password">
+          <span class="campo__icono"><svg class="icono icono--sm"><use href="#i-lock"></use></svg></span>
+        </div>
+
+        <div class="fila fila--entre mb-5">
+          <label class="fila gap-2 pequeno" style="cursor:pointer">
+            <input type="checkbox" id="recordar" style="accent-color:var(--amber-ink)">
+            Mantener sesión abierta
+          </label>
+          <a class="pequeno" href="#" style="color:var(--amber-ink);font-weight:550">¿Olvidaste tu clave?</a>
+        </div>
+
+        <button class="boton boton--primario boton--bloque boton--lg" type="submit">
+          Entrar
+          <svg class="icono icono--sm"><use href="#i-arrow-right"></use></svg>
+        </button>
+
+      </form>
+
+      <!-- Registro -->
+      <form id="form-registro" novalidate hidden>
+        <div class="alerta alerta--error" id="error-registro" hidden>
+          <svg class="icono icono--sm"><use href="#i-alert"></use></svg>
+          <span id="error-registro-texto"></span>
+        </div>
+        <div class="alerta alerta--ok" id="ok-registro" hidden>
+          <svg class="icono icono--sm"><use href="#i-check-circle"></use></svg>
+          <span>Cuenta creada. Ya puedes iniciar sesión.</span>
+        </div>
+
+        <div class="campo campo--icono">
+          <label class="campo__etiqueta" for="reg-nombre">Nombre y apellido</label>
+          <input class="input" id="reg-nombre" type="text" placeholder="Xavier Lluen" autocomplete="name">
+          <span class="campo__icono"><svg class="icono icono--sm"><use href="#i-user"></use></svg></span>
+        </div>
+
+        <div class="campo campo--icono">
+          <label class="campo__etiqueta" for="reg-correo">Correo</label>
+          <input class="input" id="reg-correo" type="email" placeholder="nombre@coffeeonline.pe" autocomplete="email">
+          <span class="campo__icono"><svg class="icono icono--sm"><use href="#i-mail"></use></svg></span>
+        </div>
+
+        <div class="campo campo--icono">
+          <label class="campo__etiqueta" for="reg-clave">Contraseña</label>
+          <input class="input" id="reg-clave" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          <span class="campo__icono"><svg class="icono icono--sm"><use href="#i-lock"></use></svg></span>
+        </div>
+
+        <div class="campo campo--icono">
+          <label class="campo__etiqueta" for="reg-clave2">Repite la contraseña</label>
+          <input class="input" id="reg-clave2" type="password" placeholder="••••••••" autocomplete="new-password">
+          <span class="campo__icono"><svg class="icono icono--sm"><use href="#i-lock"></use></svg></span>
+        </div>
+
+        <label class="fila gap-2 pequeno mb-5" style="cursor:pointer;align-items:flex-start">
+          <input type="checkbox" id="terminos" style="accent-color:var(--amber-ink);margin-top:3px">
+          <span class="atenuado">Acepto el tratamiento de mis datos para gestionar pedidos dentro del campus.</span>
+        </label>
+
+        <button class="boton boton--primario boton--bloque boton--lg" type="submit">
+          Crear mi cuenta
+          <svg class="icono icono--sm"><use href="#i-check"></use></svg>
+        </button>
+      </form>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  CO.iniciar({ cabecera: false, pie: false });
+
+  var tabLogin    = CO.qs('#tab-login');
+  var tabRegistro = CO.qs('#tab-registro');
+  var fLogin      = CO.qs('#form-login');
+  var fRegistro   = CO.qs('#form-registro');
+
+  function verPestania(cual) {
+    var esLogin = cual === 'login';
+    tabLogin.classList.toggle('is-active', esLogin);
+    tabRegistro.classList.toggle('is-active', !esLogin);
+    fLogin.hidden = !esLogin;
+    fRegistro.hidden = esLogin;
+  }
+  tabLogin.addEventListener('click', function () { verPestania('login'); });
+  tabRegistro.addEventListener('click', function () { verPestania('registro'); });
+  if (location.hash === '#registro') verPestania('registro');
+
+  function mostrarError(id, texto) {
+    CO.qs('#' + id + '-texto').textContent = texto;
+    CO.qs('#' + id).hidden = false;
+  }
+
+  // A dónde volver después de entrar
+  function destino(sesion) {
+    var volver = CO.param('volver');
+    if (volver) return volver;
+    return sesion.rol === 'ADMIN' ? 'admin/../index/index.html' : '../index/index.html#carta';
+  }
+
+  fLogin.addEventListener('submit', function (e) {
+    e.preventDefault();
+    CO.qs('#error-login').hidden = true;
+
+    var correo = CO.qs('#correo').value.trim();
+    var clave  = CO.qs('#clave').value;
+
+    if (!correo || !clave) { mostrarError('error-login', 'Completa tu correo y tu contraseña.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) { mostrarError('error-login', 'Ese correo no tiene un formato válido.'); return; }
+
+    var s = CO.login(correo, clave);
+    if (!s) { mostrarError('error-login', 'Correo o contraseña incorrectos. Revisa e intenta de nuevo.'); return; }
+
+    location.href = destino(s);
+  });
+
+  fRegistro.addEventListener('submit', function (e) {
+    e.preventDefault();
+    CO.qs('#error-registro').hidden = true;
+    CO.qs('#ok-registro').hidden = true;
+
+    var nombre = CO.qs('#reg-nombre').value.trim();
+    var correo = CO.qs('#reg-correo').value.trim();
+    var c1     = CO.qs('#reg-clave').value;
+    var c2     = CO.qs('#reg-clave2').value;
+
+    if (nombre.length < 3)  { mostrarError('error-registro', 'Escribe tu nombre completo.'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) { mostrarError('error-registro', 'Ese correo no tiene un formato válido.'); return; }
+    if (c1.length < 6)      { mostrarError('error-registro', 'La contraseña necesita al menos 6 caracteres.'); return; }
+    if (c1 !== c2)          { mostrarError('error-registro', 'Las contraseñas no coinciden.'); return; }
+    if (!CO.qs('#terminos').checked) { mostrarError('error-registro', 'Necesitamos que aceptes el tratamiento de datos.'); return; }
+
+    var r = CO.registrar(nombre, correo, c1);
+    if (!r.ok) { mostrarError('error-registro', r.error); return; }
+
+    var s = CO.login(correo, c1);
+    CO.qs('#ok-registro').hidden = false;
+    setTimeout(function () { location.href = destino(s); }, 700);
+  });
+</script>
+</body>
+</html>

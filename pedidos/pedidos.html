@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mis pedidos · Coffee Online</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23241610'/%3E%3Cg transform='translate(4,3) scale(0.82)' fill='none' stroke='%23D9A45B' stroke-linecap='round'%3E%3Cpath fill='%23D9A45B' fill-rule='evenodd' d='M6.5 14.5h29v9.2A14.5 14.5 0 0 1 21 38.2 14.5 14.5 0 0 1 6.5 23.7Z M17.4 19.4v13.1l3.3-3.3 2.3 5.1 2.9-1.3-2.3-5 4.7-.3Z'/%3E%3Cpath stroke-width='3' d='M36 18.6h2.3a5.4 5.4 0 0 1 0 10.8H36'/%3E%3Cpath stroke-width='3.4' d='M5.6 42.4h30.8'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pedidos.css">
+</head>
+<body>
+<script src="pedidos.js"></script>
+
+<div id="cabecera"></div>
+
+<main class="contenedor" style="padding-block:var(--s6) var(--s8);max-width:940px">
+
+  <nav class="migas">
+    <a href="../index/index.html">Inicio</a>
+    <svg class="icono icono--sm"><use href="#i-chev-right"></use></svg>
+    <span>Mis pedidos</span>
+  </nav>
+
+  <div class="seccion-cabecera" style="margin-bottom:var(--s5)">
+    <div>
+      <h1 style="font-size:2.25rem">Mis pedidos</h1>
+      <p class="atenuado mt-2" id="bajada"></p>
+    </div>
+    <a class="boton boton--fantasma boton--sm" href="../index/index.html#carta">
+      <svg class="icono icono--sm"><use href="#i-plus"></use></svg>
+      Nuevo pedido
+    </a>
+  </div>
+
+  <div class="chips mb-5" id="filtros-estado">
+    <button class="chip is-active" data-estado="">Todos</button>
+    <button class="chip" data-estado="recibido">Recibidos</button>
+    <button class="chip" data-estado="preparando">En cocina</button>
+    <button class="chip" data-estado="listo">Listos</button>
+    <button class="chip" data-estado="entregado">Entregados</button>
+  </div>
+
+  <div id="lista"></div>
+</main>
+
+<div id="pie"></div>
+
+<script>
+  CO.iniciar({ activo: 'pedidos' });
+
+  if (CO.exigirSesion()) {
+    var sesion = CO.sesion();
+    var filtro = '';
+
+    function pasos(pedido) {
+      var actual = ESTADOS_PEDIDO.map(function (e) { return e.id; }).indexOf(pedido.estado);
+      return '<div class="hitos">' + ESTADOS_PEDIDO.map(function (e, i) {
+        var clase = i < actual ? 'is-done' : i === actual ? 'is-current' : 'is-pending';
+        var registro = (pedido.historial || []).filter(function (h) { return h.estado === e.id; })[0];
+        return '<div class="hito ' + clase + '">' +
+          '<span class="hito__punto">' + CO.icono(i < actual ? 'i-check' : e.icono, 'icono--sm') + '</span>' +
+          '<span class="hito__etiqueta">' + e.nombre + '</span>' +
+          '<span class="hito__hora">' + (registro ? CO.hora(registro.en) : '—') + '</span>' +
+        '</div>';
+      }).join('') + '</div>';
+    }
+
+    function pintar() {
+      var mios = CO.pedidosDe(sesion.correo);
+      var lista = filtro ? mios.filter(function (p) { return p.estado === filtro; }) : mios;
+
+      CO.qs('#bajada').textContent = mios.length
+        ? mios.length + (mios.length === 1 ? ' pedido registrado' : ' pedidos registrados') + ' con ' + sesion.correo
+        : 'Aún no tienes pedidos con ' + sesion.correo;
+
+      var cont = CO.qs('#lista');
+
+      if (!lista.length) {
+        cont.innerHTML =
+          '<div class="vacio">' +
+            '<div class="vacio__icono">' + CO.icono('i-clipboard', 'icono--lg') + '</div>' +
+            '<h3>' + (mios.length ? 'Nada con ese filtro' : 'Todavía no has pedido nada') + '</h3>' +
+            '<p class="atenuado mt-2">' + (mios.length
+              ? 'Prueba con otro estado o mira todos tus pedidos.'
+              : 'Cuando hagas tu primer pedido aparecerá acá con su seguimiento.') + '</p>' +
+            '<a class="boton boton--primario mt-4" href="../index/index.html#carta">Ver la carta' + CO.icono('i-arrow-right', 'icono--sm') + '</a>' +
+          '</div>';
+        return;
+      }
+
+      cont.innerHTML = '<div class="pila" style="--s3:20px">' + lista.map(function (p) {
+        var metodo = METODOS_PAGO.filter(function (m) { return m.id === p.pago; })[0] || METODOS_PAGO[0];
+        var abierto = p.estado !== 'entregado';
+
+        return '<article class="panel panel--ajustado">' +
+          '<div class="panel__cabecera">' +
+            '<div>' +
+              '<div class="fila gap-2">' +
+                '<span class="panel__titulo">' + p.codigo + '</span>' +
+                CO.etiquetaEstado(p.estado) +
+              '</div>' +
+              '<p class="pequeno atenuado mt-2">' + CO.fecha(p.creado, true) + ' · ' + CO.escapar(p.entregaNombre) + ' · recojo ' + p.horaRecojo + '</p>' +
+            '</div>' +
+            '<div class="derecha">' +
+              '<p class="price">' + CO.money(p.total) + '</p>' +
+              '<p class="diminuto atenuado">' + metodo.nombre + '</p>' +
+            '</div>' +
+          '</div>' +
+
+          '<div class="panel__cuerpo">' +
+            (abierto ? pasos(p) : '') +
+
+            '<div class="fila fila--ajustar gap-2 mb-4">' +
+              p.lineas.map(function (l) {
+                return '<span class="etiqueta">' + l.cantidad + '× ' + CO.escapar(l.nombre) + '</span>';
+              }).join('') +
+            '</div>' +
+
+            '<div class="fila fila--entre fila--ajustar gap-2">' +
+              '<span class="pequeno atenuado">' +
+                (p.estado === 'listo' ? 'Tu pedido te espera en ' + CO.escapar(p.entregaDetalle) + '.'
+                 : p.estado === 'entregado' ? 'Entregado. Gracias por tu compra.'
+                 : 'Te avisamos apenas salga de cocina.') +
+              '</span>' +
+              '<div class="fila gap-2">' +
+                '<button class="boton boton--fantasma boton--sm" data-repetir="' + p.codigo + '">' +
+                  CO.icono('i-refresh', 'icono--sm') + 'Volver a pedir</button>' +
+                '<a class="boton boton--discreto boton--sm" href="../confirmacion/confirmacion.html?codigo=' + p.codigo + '">Ver detalle</a>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</article>';
+      }).join('') + '</div>';
+    }
+
+    CO.qs('#filtros-estado').addEventListener('click', function (e) {
+      var chip = e.target.closest('[data-estado]');
+      if (!chip) return;
+      filtro = chip.getAttribute('data-estado');
+      CO.qsa('#filtros-estado .chip').forEach(function (c) { c.classList.toggle('is-active', c === chip); });
+      pintar();
+    });
+
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-repetir]');
+      if (!btn) return;
+      var p = CO.pedido(btn.getAttribute('data-repetir'));
+      if (!p) return;
+      p.lineas.forEach(function (l) { CO.agregar(l.id, l.cantidad); });
+      CO.toast('Agregamos ese pedido a tu carrito');
+      setTimeout(function () { location.href = '../carrito/carrito.html'; }, 700);
+    });
+
+    pintar();
+  }
+
+  MOV.revelar();
+  MOV.detalles();
+  MOV.anclas();
+</script>
+</body>
+</html>

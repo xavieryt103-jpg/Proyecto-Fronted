@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reportes · Administración Coffee Online</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23241610'/%3E%3Cg transform='translate(4,3) scale(0.82)' fill='none' stroke='%23D9A45B' stroke-linecap='round'%3E%3Cpath fill='%23D9A45B' fill-rule='evenodd' d='M6.5 14.5h29v9.2A14.5 14.5 0 0 1 21 38.2 14.5 14.5 0 0 1 6.5 23.7Z M17.4 19.4v13.1l3.3-3.3 2.3 5.1 2.9-1.3-2.3-5 4.7-.3Z'/%3E%3Cpath stroke-width='3' d='M36 18.6h2.3a5.4 5.4 0 0 1 0 10.8H36'/%3E%3Cpath stroke-width='3.4' d='M5.6 42.4h30.8'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="reportes.css">
+</head>
+<body>
+<script src="reportes.js"></script>
+
+<div class="panel-admin">
+  <div id="lateral"></div>
+
+  <div class="panel-admin__principal">
+    <div id="superior"></div>
+
+    <div class="panel-admin__contenido">
+
+      <div class="grid-4 mb-6" id="indicadores"></div>
+
+      <section class="panel mb-6">
+        <div class="fila fila--entre fila--ajustar gap-4 mb-4">
+          <h3 class="panel__titulo">Ventas por día</h3>
+          <div class="chips" id="periodos">
+            <button class="chip is-active" data-dias="7">7 días</button>
+            <button class="chip" data-dias="14">14 días</button>
+            <button class="chip" data-dias="30">30 días</button>
+          </div>
+        </div>
+        <div class="grafico" id="grafico"></div>
+      </section>
+
+      <div class="grid-2 mb-6" style="gap:24px;align-items:start">
+
+        <section class="panel">
+          <h3 class="panel__titulo mb-5">Ventas por categoría</h3>
+          <div class="ranking-barras" id="por-categoria"></div>
+        </section>
+
+        <section class="panel">
+          <h3 class="panel__titulo mb-5">Cómo pagan y dónde recogen</h3>
+          <div id="distribuciones"></div>
+        </section>
+
+      </div>
+
+      <section class="panel panel--ajustado">
+        <div class="panel__cabecera">
+          <h3 class="panel__titulo">Ranking de productos</h3>
+          <button class="boton boton--fantasma boton--sm" id="exportar">
+            <svg class="icono icono--sm"><use href="#i-download"></use></svg>
+            Descargar CSV
+          </button>
+        </div>
+        <div class="tabla__desplazable">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th style="width:56px">#</th><th>Producto</th><th>Categoría</th>
+                <th class="tabla__numero">Unidades</th><th class="tabla__numero">Importe</th>
+                <th class="tabla__numero">% del total</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-ranking"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  CO.iniciar({ cabecera: false, pie: false });
+
+  if (CO.exigirAdmin()) {
+    ADMIN.montar('reportes', 'Reportes de venta');
+
+    var todos = CO.pedidos().filter(function (p) { return p.estado !== 'anulado'; });
+    var totalGeneral = ADMIN.ventas(todos);
+    var unidades = todos.reduce(function (s, p) {
+      return s + p.lineas.reduce(function (t, l) { return t + l.cantidad; }, 0);
+    }, 0);
+
+    /* --- Indicadores --- */
+    CO.qs('#indicadores').innerHTML =
+      card('Ventas acumuladas', CO.money(totalGeneral), 'i-coins') +
+      card('Pedidos atendidos', todos.length, 'i-clipboard') +
+      card('Ticket promedio', CO.money(todos.length ? totalGeneral / todos.length : 0), 'i-receipt') +
+      card('Unidades vendidas', unidades, 'i-package');
+
+    function card(etiqueta, valor, ico) {
+      return '<div class="estadistica">' +
+        '<p class="estadistica__etiqueta">' + CO.icono(ico, 'icono--sm') + etiqueta + '</p>' +
+        '<p class="estadistica__valor">' + valor + '</p></div>';
+    }
+
+    /* --- Gráfico por periodo --- */
+    function pintarGrafico(dias) {
+      var serie = ADMIN.serieDiaria(dias);
+      var maximo = Math.max.apply(null, serie.map(function (d) { return d.total; })) || 1;
+      var compacto = dias > 10;
+
+      CO.qs('#grafico').innerHTML = serie.map(function (d, i) {
+        var alto = Math.max(3, Math.round((d.total / maximo) * 100));
+        var etiqueta = compacto
+          ? (i % Math.ceil(dias / 8) === 0 ? d.fecha.getDate() + '/' + (d.fecha.getMonth() + 1) : '')
+          : d.etiqueta;
+        return '<div class="grafico__columna" title="' + CO.fecha(d.fecha) + ': ' + CO.money(d.total) + ' · ' + d.pedidos + ' pedidos">' +
+          (compacto ? '' : '<span class="diminuto numero atenuado">' + Math.round(d.total) + '</span>') +
+          '<div class="grafico__barra" style="height:' + alto + '%"></div>' +
+          '<span class="grafico__etiqueta">' + etiqueta + '</span>' +
+        '</div>';
+      }).join('');
+    }
+
+    CO.qs('#periodos').addEventListener('click', function (e) {
+      var chip = e.target.closest('[data-dias]');
+      if (!chip) return;
+      CO.qsa('#periodos .chip').forEach(function (c) { c.classList.toggle('is-active', c === chip); });
+      pintarGrafico(parseInt(chip.getAttribute('data-dias'), 10));
+    });
+
+    pintarGrafico(7);
+
+    /* --- Ventas por categoría --- */
+    var cats = ADMIN.porCategoria();
+    var techoCat = cats.length ? cats[0].importe : 1;
+    CO.qs('#por-categoria').innerHTML = cats.map(function (c) {
+      var pct = totalGeneral ? (c.importe / totalGeneral) * 100 : 0;
+      return '<div class="ranking-barras__fila">' +
+        '<div class="ranking-barras__encabezado">' +
+          '<b>' + CO.categoria(c.cat).nombre + '</b>' +
+          '<span class="atenuado numero">' + CO.money(c.importe) + ' · ' + pct.toFixed(1) + '%</span>' +
+        '</div>' +
+        '<div class="ranking-barras__pista"><div class="ranking-barras__relleno" style="width:' + Math.round((c.importe / techoCat) * 100) + '%"></div></div>' +
+      '</div>';
+    }).join('');
+
+    /* --- Distribución de pago y de entrega --- */
+    function distribucion(titulo, catalogo, campo) {
+      var conteo = {};
+      todos.forEach(function (p) { conteo[p[campo]] = (conteo[p[campo]] || 0) + 1; });
+      var techo = Math.max.apply(null, catalogo.map(function (x) { return conteo[x.id] || 0; })) || 1;
+
+      return '<p class="filtros__titulo">' + titulo + '</p>' +
+        '<div class="ranking-barras mb-6">' + catalogo.map(function (x) {
+          var n = conteo[x.id] || 0;
+          var pct = todos.length ? (n / todos.length) * 100 : 0;
+          return '<div class="ranking-barras__fila">' +
+            '<div class="ranking-barras__encabezado"><b>' + x.nombre + '</b>' +
+              '<span class="atenuado numero">' + n + ' · ' + pct.toFixed(0) + '%</span></div>' +
+            '<div class="ranking-barras__pista"><div class="ranking-barras__relleno" style="width:' + Math.round((n / techo) * 100) + '%"></div></div>' +
+          '</div>';
+        }).join('') + '</div>';
+    }
+
+    CO.qs('#distribuciones').innerHTML =
+      distribucion('Forma de pago', METODOS_PAGO, 'pago') +
+      distribucion('Punto de entrega', PUNTOS_ENTREGA, 'entrega');
+
+    /* --- Ranking completo --- */
+    var ranking = ADMIN.ranking(50);
+
+    CO.qs('#tabla-ranking').innerHTML = ranking.length
+      ? ranking.map(function (r, i) {
+          var p = CO.producto(r.id);
+          var pct = totalGeneral ? (r.importe / totalGeneral) * 100 : 0;
+          return '<tr>' +
+            '<td class="numero atenuado">' + (i + 1) + '</td>' +
+            '<td><b style="color:var(--ink)">' + CO.escapar(r.nombre) + '</b></td>' +
+            '<td class="pequeno atenuado">' + (p ? CO.categoria(p.cat).nombre : '—') + '</td>' +
+            '<td class="tabla__numero numero">' + r.unidades + '</td>' +
+            '<td class="tabla__numero numero">' + CO.money(r.importe) + '</td>' +
+            '<td class="tabla__numero numero">' + pct.toFixed(1) + '%</td>' +
+          '</tr>';
+        }).join('')
+      : '<tr><td colspan="6" class="centro atenuado" style="padding:48px">Todavía no hay ventas registradas.</td></tr>';
+
+    /* --- Exportar a CSV --- */
+    CO.qs('#exportar').addEventListener('click', function () {
+      var filas = [['Puesto', 'Producto', 'Categoria', 'Unidades', 'Importe', 'Porcentaje']];
+      ranking.forEach(function (r, i) {
+        var p = CO.producto(r.id);
+        filas.push([
+          i + 1, r.nombre, p ? CO.categoria(p.cat).nombre : '',
+          r.unidades, r.importe.toFixed(2),
+          (totalGeneral ? (r.importe / totalGeneral) * 100 : 0).toFixed(1)
+        ]);
+      });
+
+      var csv = filas.map(function (f) {
+        return f.map(function (c) { return '"' + String(c).replace(/"/g, '""') + '"'; }).join(';');
+      }).join('\r\n');
+
+      var blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'reporte-productos-coffee-online.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      CO.toast('Reporte descargado', 'i-download');
+    });
+  }
+</script>
+</body>
+</html>

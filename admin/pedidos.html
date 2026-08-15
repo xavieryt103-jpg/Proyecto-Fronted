@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos · Administración Coffee Online</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23241610'/%3E%3Cg transform='translate(4,3) scale(0.82)' fill='none' stroke='%23D9A45B' stroke-linecap='round'%3E%3Cpath fill='%23D9A45B' fill-rule='evenodd' d='M6.5 14.5h29v9.2A14.5 14.5 0 0 1 21 38.2 14.5 14.5 0 0 1 6.5 23.7Z M17.4 19.4v13.1l3.3-3.3 2.3 5.1 2.9-1.3-2.3-5 4.7-.3Z'/%3E%3Cpath stroke-width='3' d='M36 18.6h2.3a5.4 5.4 0 0 1 0 10.8H36'/%3E%3Cpath stroke-width='3.4' d='M5.6 42.4h30.8'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="pedidos.css">
+</head>
+<body>
+<script src="pedidos.js"></script>
+
+<div class="panel-admin">
+  <div id="lateral"></div>
+
+  <div class="panel-admin__principal">
+    <div id="superior"></div>
+
+    <div class="panel-admin__contenido">
+
+      <div class="barra-herramientas">
+        <div class="buscador" style="flex:1;min-width:240px">
+          <span class="buscador__icono"><svg class="icono icono--sm"><use href="#i-search"></use></svg></span>
+          <input class="input" type="search" id="buscador" placeholder="Buscar por código, cliente o correo…" autocomplete="off">
+        </div>
+        <div class="chips" id="filtros">
+          <button class="chip is-active" data-estado="">Todos</button>
+          <button class="chip" data-estado="recibido">Recibidos</button>
+          <button class="chip" data-estado="preparando">En cocina</button>
+          <button class="chip" data-estado="listo">Listos</button>
+          <button class="chip" data-estado="entregado">Entregados</button>
+        </div>
+      </div>
+
+      <p class="pequeno atenuado mb-4" id="conteo"></p>
+
+      <section class="panel panel--ajustado">
+        <div class="tabla__desplazable">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Código</th><th>Fecha</th><th>Cliente</th><th>Detalle</th>
+                <th>Entrega</th><th>Estado</th><th class="tabla__numero">Total</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="tabla"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- Ficha del pedido -->
+<div class="modal" id="modal">
+  <div class="modal__fondo" data-cerrar></div>
+  <div class="modal__caja">
+    <div class="modal__cabecera">
+      <div>
+        <h3 class="panel__titulo" id="m-codigo"></h3>
+        <p class="diminuto atenuado" id="m-fecha"></p>
+      </div>
+      <button class="boton-icono" data-cerrar aria-label="Cerrar">
+        <svg class="icono"><use href="#i-close"></use></svg>
+      </button>
+    </div>
+    <div class="modal__cuerpo" id="m-cuerpo"></div>
+  </div>
+</div>
+
+<script>
+  CO.iniciar({ cabecera: false, pie: false });
+
+  if (CO.exigirAdmin()) {
+    ADMIN.montar('pedidos', 'Gestión de pedidos');
+
+    var filtro = '';
+    var busqueda = '';
+
+    function listar() {
+      var q = CO.normalizar(busqueda.trim());
+      return CO.pedidos().filter(function (p) {
+        if (filtro && p.estado !== filtro) return false;
+        if (q && CO.normalizar(p.codigo + ' ' + p.cliente + ' ' + p.correo).indexOf(q) === -1) return false;
+        return true;
+      });
+    }
+
+    function pintar() {
+      var lista = listar();
+      CO.qs('#conteo').textContent = lista.length + (lista.length === 1 ? ' pedido' : ' pedidos') +
+        ' · ' + CO.money(ADMIN.ventas(lista)) + ' facturados';
+
+      CO.qs('#tabla').innerHTML = lista.length
+        ? lista.map(function (p) {
+            return '<tr>' +
+              '<td><b style="color:var(--ink)">' + p.codigo + '</b></td>' +
+              '<td class="pequeno atenuado">' + CO.fecha(p.creado, true) + '</td>' +
+              '<td><b style="color:var(--ink);display:block">' + CO.escapar(p.cliente) + '</b>' +
+                  '<span class="diminuto atenuado">' + CO.escapar(p.correo) + '</span></td>' +
+              '<td class="pequeno atenuado">' + p.lineas.length + ' ítems · ' + p.lineas.reduce(function (s, l) { return s + l.cantidad; }, 0) + ' u.</td>' +
+              '<td class="pequeno">' + CO.escapar(p.entregaNombre) + '<br><span class="diminuto atenuado">recojo ' + p.horaRecojo + '</span></td>' +
+              '<td>' + CO.etiquetaEstado(p.estado) + '</td>' +
+              '<td class="tabla__numero numero">' + CO.money(p.total) + '</td>' +
+              '<td class="derecha"><button class="boton boton--fantasma boton--sm" data-ver="' + p.codigo + '">' +
+                CO.icono('i-eye', 'icono--sm') + 'Abrir</button></td>' +
+            '</tr>';
+          }).join('')
+        : '<tr><td colspan="8" class="centro atenuado" style="padding:48px">Ningún pedido coincide con la búsqueda.</td></tr>';
+    }
+
+    /* --- Ficha en modal --- */
+    function abrir(codigo) {
+      var p = CO.pedido(codigo);
+      if (!p) return;
+      var metodo = METODOS_PAGO.filter(function (m) { return m.id === p.pago; })[0] || METODOS_PAGO[0];
+
+      CO.qs('#m-codigo').textContent = p.codigo;
+      CO.qs('#m-fecha').textContent = CO.fecha(p.creado, true) + ' · ' + metodo.nombre;
+
+      CO.qs('#m-cuerpo').innerHTML =
+        '<div class="fila fila--entre mb-5">' +
+          CO.etiquetaEstado(p.estado) +
+          '<span class="price">' + CO.money(p.total) + '</span>' +
+        '</div>' +
+
+        '<div class="panel mb-5" style="padding:16px">' +
+          '<dl class="resumen"><dt>Cliente</dt><dd>' + CO.escapar(p.cliente) + '</dd></dl>' +
+          '<dl class="resumen"><dt>Correo</dt><dd>' + CO.escapar(p.correo) + '</dd></dl>' +
+          '<dl class="resumen"><dt>Celular</dt><dd>' + CO.escapar(p.telefono || '—') + '</dd></dl>' +
+          '<dl class="resumen"><dt>Entrega</dt><dd>' + CO.escapar(p.entregaNombre) + '</dd></dl>' +
+          '<dl class="resumen"><dt>Hora de recojo</dt><dd>' + p.horaRecojo + '</dd></dl>' +
+        '</div>' +
+
+        (p.nota ? '<div class="caja-ayuda mb-5"><b>Nota para cocina:</b><br>' + CO.escapar(p.nota) + '</div>' : '') +
+
+        '<p class="filtros__titulo">Productos</p>' +
+        p.lineas.map(function (l) {
+          return '<div class="fila fila--entre pequeno" style="padding:7px 0;border-bottom:1px solid var(--line)">' +
+            '<span><b style="color:var(--ink)">' + l.cantidad + '×</b> ' + CO.escapar(l.nombre) + '</span>' +
+            '<span class="numero">' + CO.money(l.importe) + '</span>' +
+          '</div>';
+        }).join('') +
+        '<dl class="resumen resumen--total"><dt>Total</dt><dd>' + CO.money(p.total) + '</dd></dl>' +
+
+        '<p class="filtros__titulo mt-5">Cambiar estado</p>' +
+        '<div class="chips">' +
+          ESTADOS_PEDIDO.map(function (e) {
+            return '<button class="chip' + (e.id === p.estado ? ' is-active' : '') + '" data-estado-nuevo="' + e.id + '" data-codigo="' + p.codigo + '">' +
+              e.nombre + '</button>';
+          }).join('') +
+          '<button class="chip" data-estado-nuevo="anulado" data-codigo="' + p.codigo + '" style="color:var(--clay)">Anular</button>' +
+        '</div>';
+
+      CO.qs('#modal').classList.add('is-open');
+    }
+
+    function cerrar() { CO.qs('#modal').classList.remove('is-open'); }
+
+    document.addEventListener('click', function (e) {
+      var ver = e.target.closest('[data-ver]');
+      if (ver) { abrir(ver.getAttribute('data-ver')); return; }
+
+      if (e.target.closest('[data-cerrar]')) { cerrar(); return; }
+
+      var cambio = e.target.closest('[data-estado-nuevo]');
+      if (cambio) {
+        var codigo = cambio.getAttribute('data-codigo');
+        var nuevo  = cambio.getAttribute('data-estado-nuevo');
+        // [API] PATCH /api/pedidos/{codigo}/estado
+        CO.cambiarEstado(codigo, nuevo);
+        CO.toast('Pedido ' + codigo + ' → ' + nuevo);
+        pintar();
+        abrir(codigo);
+      }
+    });
+
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+
+    CO.qs('#filtros').addEventListener('click', function (e) {
+      var chip = e.target.closest('[data-estado]');
+      if (!chip) return;
+      filtro = chip.getAttribute('data-estado');
+      CO.qsa('#filtros .chip').forEach(function (c) { c.classList.toggle('is-active', c === chip); });
+      pintar();
+    });
+
+    CO.qs('#buscador').addEventListener('input', function () { busqueda = this.value; pintar(); });
+
+    pintar();
+  }
+</script>
+</body>
+</html>
